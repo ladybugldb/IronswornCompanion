@@ -1,0 +1,46 @@
+pipeline {
+
+  agent {
+    kubernetes {
+      label 'isc-chart'
+      defaultContainer 'jnlp'
+      yamlFile 'KubernetesPod.yaml'
+    }
+  }
+
+  options {
+    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')
+    disableConcurrentBuilds()
+  }
+
+  stages {
+    stage('Init') {
+      steps {
+        container('git') {
+          script {
+            VERSION = sh(returnStdout: true, script: "git describe --always --long --dirty").trim()
+            TSTAMP = sh(returnStdout: true, script: "date +%Y:%m:%d-%H:%M:%S").trim()
+          }
+          echo "Starting chart creation process."
+        }
+      }
+    }
+
+    stage('chart') {
+      steps {
+        container('helm') {
+          sh "helm cm-push charts/ironsworn_companion/ c7d"
+        }
+      }
+    }
+
+    stage('Finished') {
+      steps {
+        container('busybox') {
+          echo "Finished"
+        }
+      }
+    }
+  }
+
+}

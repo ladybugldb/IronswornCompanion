@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "ironsworn_companion.fullname" . }}-test-connection"
+  labels:
+    {{- include "ironsworn_companion.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "ironsworn_companion.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
