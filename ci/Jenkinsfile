@@ -23,7 +23,7 @@ pipeline {
         container('jq') {
           script {
             VERSION = sh(returnStdout: true, script: "jq -r .version package.json").trim()
-            TSTAMP = sh(returnStdout: true, script: "date +%Y:%m:%d-%H:%M:%S").trim()
+            TSTAMP = sh(returnStdout: true, script: "date +%Y%m%d-%H%M%S").trim()
           }
           echo "Starting container build."
         }
