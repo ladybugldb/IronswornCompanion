@@ -29,7 +29,7 @@ pipeline {
     stage('chart') {
       steps {
         container('helm') {
-          sh "helm cm-push charts/ironsworn_companion/ c7d"
+          sh "helm cm-push chart/ironsworn_companion/ c7d"
         }
       }
     }
