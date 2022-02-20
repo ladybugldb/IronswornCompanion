@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 spec:
   imagePullSecrets:
-  - name: jenkins-harbor
+  - name: jenkins-harbor-cred
   containers:
   - name: busybox
     image: busybox:latest
