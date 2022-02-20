@@ -5,7 +5,7 @@ spec:
   - name: jenkins-harbor-cred
   containers:
   - name: busybox
-    image: core.c7d.net/dockerhub/busybox:latest
+    image: core.c7d.net/dockerhub/library/busybox:latest
     command: ['cat']
     tty: true
   - name: git
@@ -21,7 +21,7 @@ spec:
     command: ['cat']
     tty: true
   - name: docker
-    image: core.c7d.net/dockerhub/docker:latest
+    image: core.c7d.net/dockerhub/library/docker:latest
     command: ['cat']
     tty: true
     volumeMounts:
