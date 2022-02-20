@@ -4,7 +4,7 @@ pipeline {
     kubernetes {
       label 'isc-chart'
       defaultContainer 'jnlp'
-      yamlFile 'KubernetesPod.yaml'
+      yamlFile 'ci/KubernetesPod.yaml'
     }
   }
 
