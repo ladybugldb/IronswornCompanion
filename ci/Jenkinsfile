@@ -1,0 +1,61 @@
+pipeline {
+
+  agent {
+    kubernetes {
+      label 'ironsworncompanion'
+      defaultContainer 'jnlp'
+      yamlFile 'ci/KubernetesPod.yaml'
+    }
+  }
+
+  options {
+    buildDiscarder logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')
+    disableConcurrentBuilds()
+  }
+
+  triggers {
+    pollSCM '5 * * * *'
+  }
+
+  stages {
+    stage('Init') {
+      steps {
+        container('jq') {
+          script {
+            VERSION = sh(returnStdout: true, script: "jq -r .version package.json").trim()
+            TSTAMP = sh(returnStdout: true, script: "date +%Y:%m:%d-%H:%M:%S").trim()
+          }
+          echo "Starting container build."
+        }
+      }
+    }
+
+    stage('Docker Login') {
+      steps {
+        container('docker') {
+          withCredentials([usernamePassword(credentialsId: 'jenkins-harbor', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
+            sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD} core.c7d.net/c7d"
+          }
+        }
+      }
+    }
+
+    stage('Container') {
+      steps {
+        container('docker') {
+          sh "docker build -t core.c7d.net/c7d/ironsworncompanion:${VERSION}-${TSTAMP} --network=host ."
+          sh "docker push core.c7d.net/c7d/ironsworncompanion:latest"
+        }
+      }
+    }
+
+    stage('Finished') {
+      steps {
+        container('busybox') {
+          echo "Finished"
+        }
+      }
+    }
+  }
+
+}
