@@ -43,7 +43,8 @@ pipeline {
     stage('Container') {
       steps {
         container('docker') {
-          sh "docker build -t core.c7d.net/c7d/ironsworncompanion:${VERSION}-${TSTAMP} --network=host ."
+          sh "docker build -t core.c7d.net/c7d/ironsworncompanion:${VERSION}-${TSTAMP} -t core.c7d.net/c7d/ironsworncompanion:latest --network=host ."
+          sh "docker push core.c7d.net/c7d/ironsworncompanion:${VERSION}-${TSTAMP}"
           sh "docker push core.c7d.net/c7d/ironsworncompanion:latest"
         }
       }
